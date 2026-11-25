@@ -56,6 +56,11 @@ def test_fastapi_proxy_end_to_end_lifecycle(tmp_path: Path) -> None:
     app = create_app(settings=ProxySettings(db_path=db_path))
 
     with TestClient(app) as client:
+        ui = client.get("/")
+        assert ui.status_code == 200
+        assert "qcloak-proxy" in ui.text
+        assert "Circuit Cloaking Auditor" in ui.text
+
         health = client.get("/health")
         assert health.status_code == 200
         backend_names = [b["name"] for b in health.json()["backends"]]

@@ -9,6 +9,7 @@ from dataclasses import asdict
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from qiskit import QuantumCircuit
 from qiskit.qasm3 import dumps as qasm3_dumps
@@ -29,6 +30,7 @@ from qcloak_proxy.metrics import (
 from qcloak_proxy.obfuscation.cutter import CircuitCutter
 from qcloak_proxy.obfuscation.pipeline import ObfuscationPipeline
 from qcloak_proxy.server.state_store import JobRecord, LocalStateStore, _utc_now_iso
+from qcloak_proxy.server.ui import DASHBOARD_HTML
 
 
 class SubmitJobRequest(BaseModel):
@@ -206,6 +208,12 @@ def create_app(
                 detail=f"Unknown backend '{target}'. Available: {sorted(backend_registry)}",
             )
         return backend_registry[target]
+
+    @app.get("/", response_class=HTMLResponse, include_in_schema=False)
+    @app.get("/ui", response_class=HTMLResponse, include_in_schema=False)
+    async def dashboard() -> HTMLResponse:
+        """Serve the embedded zero-dependency Web Dashboard."""
+        return HTMLResponse(content=DASHBOARD_HTML)
 
     @app.get("/health", response_model=HealthResponse)
     async def health() -> HealthResponse:

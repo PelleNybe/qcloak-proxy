@@ -18,6 +18,8 @@ uv pip install -e .
 qcloak-proxy serve --host 127.0.0.1 --port 8000 --privacy-profile medium
 ```
 
+Once running, open `http://127.0.0.1:8000/` (or `/ui`) in your browser to access the embedded **Web Dashboard** (dry-run circuit cloaking auditor, decoded probability histograms, and SQLite key vault), or `http://127.0.0.1:8000/docs` for Swagger OpenAPI.
+
 ### Environment Variables (`QCLOAK_*`)
 | Variable | Default | Description |
 | :--- | :--- | :--- |

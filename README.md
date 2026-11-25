@@ -56,10 +56,11 @@ cd qcloak-proxy
 pip install -e .
 ```
 
-### 2. Launch the Local Privacy Proxy
+### 2. Launch the Local Privacy Proxy & Web Dashboard
 ```bash
 qcloak-proxy serve --host 127.0.0.1 --port 8000 --privacy-profile medium
 ```
+Then open **`http://127.0.0.1:8000/`** in your browser for the embedded **Circuit Cloaking Auditor, Price-of-Privacy Visualizer, and Local Key Vault** (zero extra dependencies), or **`http://127.0.0.1:8000/docs`** for OpenAPI.
 
 ### 3. Run a "Price of Privacy" Benchmark
 ```bash
