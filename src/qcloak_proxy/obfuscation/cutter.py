@@ -74,20 +74,22 @@ def _split_counts_by_creg(
         flat_counts = {k.replace(" ", ""): v for k, v in counts.items()}
         return {reg.name: BitArray.from_counts(flat_counts, num_bits=len(reg))}
 
-    # Multiple cregs: Qiskit formats bitstrings as "<creg[-1]> ... <creg[0]>"
-    per_reg_counts: list[dict[str, int]] = [{} for _ in cregs]
+    # Multiple cregs: Qiskit formats bitstrings as "<creg[-1]> ... <creg[0]>".
+    # Expand aligned per-shot samples so shot i in each register corresponds to the same shot.
+    per_reg_samples: list[list[str]] = [[] for _ in cregs]
     for raw_bits, count in counts.items():
+        if count <= 0:
+            continue
         flat = raw_bits.replace(" ", "")
         offset = 0
-        # Reverse order matches Qiskit's big-endian register ordering
         for rev_idx, reg in enumerate(reversed(cregs)):
             orig_idx = len(cregs) - 1 - rev_idx
             seg = flat[offset : offset + len(reg)]
             offset += len(reg)
-            per_reg_counts[orig_idx][seg] = per_reg_counts[orig_idx].get(seg, 0) + count
+            per_reg_samples[orig_idx].extend([seg] * count)
 
     return {
-        reg.name: BitArray.from_counts(per_reg_counts[i], num_bits=len(reg))
+        reg.name: BitArray.from_samples(per_reg_samples[i], num_bits=len(reg))
         for i, reg in enumerate(cregs)
     }
 

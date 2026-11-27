@@ -61,7 +61,7 @@ async def test_circuit_cutting_distribution_reconstruction() -> None:
     backend = LocalAerBackend(backend_name="aer_cut", seed_simulator=7)
     cutter = CircuitCutter(
         max_subcircuit_qubits=2,
-        num_samples=250,
+        num_samples=1000,
         shots_per_subexperiment=2048,
         privacy_profile=PrivacyProfile.LOW,
         seed=99,

@@ -222,6 +222,41 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .bar-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--accent), #06b6d4);
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      display: inline-block;
+      animation: qcloak-pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes qcloak-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+    footer {
+      max-width: 1280px;
+      margin: 0 auto 1.5rem auto;
+      padding: 0.75rem 1.5rem 0 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--border);
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    footer a:hover {
+      color: var(--accent-hover);
+      border-color: var(--accent-hover);
     }
     .table-wrap { overflow-x: auto; }
     table {
@@ -364,6 +399,16 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     </div>
   </dialog>
 
+  <footer>
+    <span>
+      Engineered by <a href="https://coraxcolab.com" target="_blank" rel="noopener noreferrer">Corax CoLAB</a>
+      &bull; Lead Developer: <a href="https://github.com/PelleNybe" target="_blank" rel="noopener noreferrer">Pelle (@PelleNybe)</a>
+    </span>
+    <span>
+      <a href="https://buymeacoffee.com/pellenybe" target="_blank" rel="noopener noreferrer">☕ Support / Buy Me a Coffee</a>
+    </span>
+  </footer>
+
   <script>
     const PRESETS = {
       bell: `OPENQASM 3.0;\ninclude "stdgates.inc";\nqubit[2] q;\nbit[2] c;\nh q[0];\ncx q[0], q[1];\nc = measure q;\n`,
@@ -401,7 +446,9 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     async function loadHealth() {
       try {
         const data = await apiFetch("/health");
-        $("healthBadge").textContent = `Online v${data.version}`;
+        const dot = document.createElement("span");
+        dot.className = "pulse-dot";
+        $("healthBadge").replaceChildren(dot, document.createTextNode(` Online v${data.version}`));
         $("healthBadge").className = "badge ok";
         const sel = $("backendSelect");
         sel.replaceChildren();
